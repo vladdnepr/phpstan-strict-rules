@@ -10,6 +10,8 @@ use PhpParser\NodeVisitorAbstract;
 use PHPStan\Analyser\Scope;
 use PHPStan\Broker\Broker;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleErrorBuilder;
+use PHPStan\Rules\RuleError;
 
 /**
  * When throwing into a catch block, checks that the previous exception is passed to the new "throw" clause
@@ -27,7 +29,7 @@ class ThrowMustBundlePreviousExceptionRule implements Rule
     /**
      * @param Catch_ $node
      * @param \PHPStan\Analyser\Scope $scope
-     * @return string[]
+     * @return RuleError[]
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -94,7 +96,9 @@ class ThrowMustBundlePreviousExceptionRule implements Rule
         $errors = [];
 
         foreach ($visitor->getUnusedThrows() as $throw) {
-            $errors[] = sprintf('Thrown exceptions in a catch block must bundle the previous exception (see throw statement line %d). More info: http://bit.ly/bundleexception', $throw->getLine());
+            $errors[] = RuleErrorBuilder::message(
+                sprintf('Thrown exceptions in a catch block must bundle the previous exception (see throw statement line %d). More info: http://bit.ly/bundleexception', $throw->getLine())
+            )->identifier('cm.throw_must_bundle_previous_exception')->build();
         }
 
         return $errors;

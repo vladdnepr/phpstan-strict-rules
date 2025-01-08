@@ -9,6 +9,8 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Broker\Broker;
 use PHPStan\Rules\Rule;
 use function strpos;
+use PHPStan\Rules\RuleErrorBuilder;
+use PHPStan\Rules\RuleError;
 
 /**
  * @implements Rule<Catch_>
@@ -23,14 +25,14 @@ class EmptyExceptionRule implements Rule
     /**
      * @param \PhpParser\Node\Stmt\Catch_ $node
      * @param \PHPStan\Analyser\Scope $scope
-     * @return string[]
+     * @return RuleError[]
      */
     public function processNode(Node $node, Scope $scope): array
     {
         if ($this->isEmpty($node->stmts)) {
-            return [
+            return [RuleErrorBuilder::message(
                 'Empty catch block. If you are sure this is meant to be empty, please add a "// @ignoreException" comment in the catch block.'
-            ];
+            )->identifier('cm.throw_must_bundle_previous_exception')->build()];
         }
 
         return [];

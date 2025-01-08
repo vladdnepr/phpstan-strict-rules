@@ -15,6 +15,8 @@ use PHPStan\Rules\Rule;
 use RuntimeException;
 use TheCodingMachine\PHPStan\Utils\PrefixGenerator;
 use Throwable;
+use PHPStan\Rules\RuleErrorBuilder;
+use PHPStan\Rules\RuleError;
 
 /**
  * When catching \Exception, \RuntimeException or \Throwable, the exception MUST be thrown again
@@ -32,7 +34,7 @@ class MustRethrowRule implements Rule
     /**
      * @param Catch_ $node
      * @param \PHPStan\Analyser\Scope $scope
-     * @return string[]
+     * @return RuleError[]
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -82,7 +84,9 @@ class MustRethrowRule implements Rule
         $errors = [];
 
         if (!$visitor->isThrowFound()) {
-            $errors[] = sprintf('%scaught "%s" must be rethrown. Either catch a more specific exception or add a "throw" clause in the "catch" block to propagate the exception. More info: http://bit.ly/failloud', PrefixGenerator::generatePrefix($scope), $exceptionType);
+            $errors[] = RuleErrorBuilder::message(
+                sprintf('%scaught "%s" must be rethrown. Either catch a more specific exception or add a "throw" clause in the "catch" block to propagate the exception. More info: http://bit.ly/failloud', PrefixGenerator::generatePrefix($scope), $exceptionType)
+            )->identifier('cm.throw_must_bundle_previous_exception')->build();
         }
 
         return $errors;

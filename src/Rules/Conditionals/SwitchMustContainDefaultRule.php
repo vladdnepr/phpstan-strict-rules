@@ -10,6 +10,8 @@ use PhpParser\NodeVisitorAbstract;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
 use TheCodingMachine\PHPStan\Utils\PrefixGenerator;
+use PHPStan\Rules\RuleErrorBuilder;
+use PHPStan\Rules\RuleError;
 
 /**
  * A switch statement must always contain a "default" statement.
@@ -26,7 +28,7 @@ class SwitchMustContainDefaultRule implements Rule
     /**
      * @param Switch_ $switch
      * @param \PHPStan\Analyser\Scope $scope
-     * @return string[]
+     * @return RuleError[]
      */
     public function processNode(Node $switch, Scope $scope): array
     {
@@ -40,7 +42,9 @@ class SwitchMustContainDefaultRule implements Rule
         }
 
         if (!$defaultFound) {
-            $errors[] = sprintf(PrefixGenerator::generatePrefix($scope).'switch statement does not have a "default" case. If your code is supposed to enter at least one "case" or another, consider adding a "default" case that throws an exception. More info: http://bit.ly/switchdefault');
+            $errors[] = RuleErrorBuilder::message(
+                sprintf(PrefixGenerator::generatePrefix($scope).'switch statement does not have a "default" case. If your code is supposed to enter at least one "case" or another, consider adding a "default" case that throws an exception. More info: http://bit.ly/switchdefault')
+            )->identifier('cm.throw_must_bundle_previous_exception')->build();
         }
 
         return $errors;
