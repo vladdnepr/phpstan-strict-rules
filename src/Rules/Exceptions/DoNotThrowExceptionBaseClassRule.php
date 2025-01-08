@@ -43,7 +43,7 @@ class DoNotThrowExceptionBaseClassRule implements Rule
             if ($class === 'Exception') {
                 return [RuleErrorBuilder::message(
                     'Do not throw the \Exception base class. Instead, extend the \Exception base class. More info: http://bit.ly/subtypeexception'
-                )->identifier('cm.throw_must_bundle_previous_exception')->build()];
+                )->identifier('cm.do.not.throw.base.exception')->build()];
             }
         }
 

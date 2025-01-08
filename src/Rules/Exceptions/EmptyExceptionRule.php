@@ -32,7 +32,7 @@ class EmptyExceptionRule implements Rule
         if ($this->isEmpty($node->stmts)) {
             return [RuleErrorBuilder::message(
                 'Empty catch block. If you are sure this is meant to be empty, please add a "// @ignoreException" comment in the catch block.'
-            )->identifier('cm.throw_must_bundle_previous_exception')->build()];
+            )->identifier('cm.empty.exception')->build()];
         }
 
         return [];
